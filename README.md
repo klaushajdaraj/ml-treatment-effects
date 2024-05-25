@@ -1,3 +1,11 @@
+# Main configurations:
+
+Ran on:
+- Windows 11
+- Python 3.9.13
+- tensoflow==2.10.0
+- protobuf==3.11.3
+
 # Files
 
 ### `repetitions_subsettreatments.joblib`
