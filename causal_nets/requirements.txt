@@ -1,0 +1,4 @@
+# Needed packages/versions
+tensorflow~=2.5.rc; python_version>'3.8'
+tensorflow>=2.4.0
+numpy
