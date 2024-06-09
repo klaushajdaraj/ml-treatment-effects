@@ -31,12 +31,12 @@ def makeplot(data, ax=None):
     sns.set_theme()
     percent_mean, percent_t4 = get_percentages(data)
     if ax:
-        plot = sns.histplot(data, kde=True, bins=10, ax=ax)
+        plot = sns.histplot(data, kde=True, bins=10, ax=ax, color="royalblue")
         ax.axvline(MEAN, 0,0.95, color="red")
         ax.axvline(1970, 0,0.95, color="green")
         ax.set_title(f"{percent_mean} over mean, {percent_t4} over treatment 4")
     else:
-        plot = sns.histplot(data, bins=10, kde=True)
+        plot = sns.histplot(data, bins=10, kde=True, color="royalblue")
         plt.axvline(MEAN, 0,0.95, color="red")
         plt.axvline(1970, 0,0.95, color="green")
         plot.fig.suptitle(f"{percent_mean} over mean, {percent_t4} over treatment 4")
