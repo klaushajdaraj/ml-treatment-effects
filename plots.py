@@ -8,6 +8,9 @@ import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
 
+# Set the theme for all graphs
+sns.set_theme(style='white')
+
 def get_data(full_data=True):
     if full_data:
         filename = r"C:\Users\klaus\Documents\repetitions_alltreatments.joblib"
@@ -28,17 +31,17 @@ def get_data(full_data=True):
        
 
 def makeplot(data, ax=None):
-    sns.set_theme()
+    sns.set_theme(style='white')
     percent_mean, percent_t4 = get_percentages(data)
     if ax:
-        plot = sns.histplot(data, kde=True, bins=10, ax=ax, color="royalblue")
-        ax.axvline(MEAN, 0,0.95, color="red")
-        ax.axvline(1970, 0,0.95, color="green")
+        plot = sns.histplot(data, kde=True, bins=10, ax=ax, color="lightslategrey")
+        ax.axvline(MEAN, 0,0.95, color="red", linestyle="--", linewidth=3)
+        ax.axvline(1970, 0,0.95, color="green", linestyle="--", linewidth=3)
         ax.set_title(f"{percent_mean} over mean, {percent_t4} over treatment 4")
     else:
-        plot = sns.histplot(data, bins=10, kde=True, color="royalblue")
-        plt.axvline(MEAN, 0,0.95, color="red")
-        plt.axvline(1970, 0,0.95, color="green")
+        plot = sns.histplot(data, bins=10, kde=True, color="lightslategrey")
+        plt.axvline(MEAN, 0,0.95, color="red", linestyle="--", linewidth=3)
+        plt.axvline(1970, 0,0.95, color="green", linestyle="--", linewidth=3)
         plot.fig.suptitle(f"{percent_mean} over mean, {percent_t4} over treatment 4")
     
 def get_percentages(data):
