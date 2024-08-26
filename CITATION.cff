@@ -12,7 +12,7 @@ preferred-citation:
   authors:
   - family-names: "Klaus"
     given-names: "Hajdaraj"
-journal: "CERGE-EI"
-month: 12
+  journal: "CERGE-EI"
+  month: 12
   title: "Casual Machine Learning for Heterogeneous Treatment Effects: An Empirical Application on Optimal Treatment Assignment"
   year: 2024
