@@ -4,6 +4,8 @@ authors:
 - family-names: "Hajdaraj"
   given-names: "Klaus"
 title: "Casual Machine Learning for Heterogeneous Treatment Effects: An Empirical Application on Optimal Treatment Assignment"
+preferred-citation:
+  type: article
 version: 1.0.0
 date-released: 2024
 url: "https://github.com/klaushajdaraj/ml-treatment-effects"
