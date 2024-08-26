@@ -1,6 +1,0 @@
-@Unpublished{casual_ml_for_heterogeneous_treatment_effects2024,
-    Title  = {Casual Machine Learning for Heterogeneous Treatment Effects: An Empirical Application on Optimal Treatment Assignment},
-    Author = {Klaus Hajdaraj},
-    Year   = {2024},
-    Url    = {https://github.com/klaushajdaraj/ml-treatment-effects}
-}

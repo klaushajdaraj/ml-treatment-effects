@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "HAJDARAJ"
+  given-names: "KLAUS"
+title: "ml-treatment-effects"
+version: 1.0.0
+date-released: 2024
+url: "https://github.com/klaushajdaraj/ml-treatment-effects"
