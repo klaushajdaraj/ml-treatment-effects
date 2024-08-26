@@ -1,6 +1,6 @@
 # Casual Machine Learning for Heterogeneous Treatment Effects: An Empirical Application on Optimal Treatment Assignment
 
-![Static Badge](https://img.shields.io/badge/python-3.9.13-blue?link=https://www.python.org/downloads/release/python-3913/)
+<object alt="Static Badge" src="https://img.shields.io/badge/python-3.9.13-blue?link=https%3A%2F%2Fwww.python.org%2Fdownloads%2Frelease%2Fpython-3913%2F">
 
 ## Introduction
 
