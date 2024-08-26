@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 authors:
-- family-names: "HAJDARAJ"
-  given-names: "KLAUS"
+- family-names: "Hajdaraj"
+  given-names: "Klaus"
 title: "Casual Machine Learning for Heterogeneous Treatment Effects: An Empirical Application on Optimal Treatment Assignment"
 version: 1.0.0
 date-released: 2024
