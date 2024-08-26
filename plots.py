@@ -3,6 +3,9 @@
 @author: Klaus Hajdaraj
 """
 
+import warnings
+warnings.filterwarnings("ignore")
+
 import joblib
 import seaborn as sns
 import pandas as pd
