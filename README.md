@@ -1,8 +1,10 @@
-# Introduction
+# Casual Machine Learning for Heterogeneous Treatment Effects: An Empirical Application on Optimal Treatment Assignment
+
+## Introduction
 
 This repository contains the code, data, and documentation for my Master Thesis, titled Casual Machine Learning for Heterogeneous Treatment Effects: An Empirical Application on Optimal Treatment Assignment. The thesis explores the utilization of machine learning for improved causal inference. Included are all the necessary scripts and resources to reproduce the results, as well as detailed explanations of the methodologies used. Feel free to explore the materials and reach out if you have any questions or feedback!
 
-# Main configurations:
+## Main configurations:
 
 Ran on:
 
@@ -11,7 +13,7 @@ Ran on:
 - tensoflow==2.10.0
 - protobuf==3.11.3
 
-# Files
+## Files
 
 ### `repetitions_subsettreatments.joblib`
 
