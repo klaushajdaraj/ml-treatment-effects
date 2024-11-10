@@ -17,6 +17,38 @@ Ran on:
 - tensoflow==2.10.0
 - protobuf==3.11.3
 
+## How to set up the virtual environment
+
+1. You can install venv to your host Python by running this command in your terminal:
+
+```console
+pip install virtualenv
+```
+2. To use venv in your project, in your terminal, cd to the project folder in your terminal, and run the following command:
+
+```console
+ cd ml-treatment-effects
+ python3.9.13 -m venv env
+```
+3. To activate your virtual environment:
+
+On Mac:
+```console
+source env/bin/activate
+```
+
+On Windows:
+```console
+ env/Scripts/activate.bat //In CMD
+ env/Scripts/Activate.ps1 //In Powershel
+```
+
+4. Install the packages and libraries:
+
+```console
+pip install -r requirements.txt
+```
+
 ## Files
 
 ### requirements.txt
