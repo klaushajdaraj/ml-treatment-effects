@@ -19,6 +19,12 @@ Ran on:
 
 ## Files
 
+### requirements.txt
+
+The file contains the required packages, libraries and dependencies. To install the requirements, run in the terminal:
+
+`pip install -r requirements.txt`
+
 ### repetitions_subsettreatments.joblib
 
 Contains the CV_Results (see mlmethods) saved from the hundred times performed three-folded cross validation Hitsch Matching for two ML-Methods. Only treatments 1, 2, 4 and 5 were considered.
