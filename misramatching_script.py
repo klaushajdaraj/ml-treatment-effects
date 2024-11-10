@@ -4,14 +4,29 @@
 """
 
 import pandas as pd
+import yaml
+import joblib
+
 from mlmethods import *
+
+# Read file paths
+with open('config.yaml', 'r') as file:
+    file_path = yaml.safe_load(file)
+
+# Read the path to data and Documents (in my computer)
+data_file_path = file_path["paths"]["data"]
+documents_file_path = file_path["paths"]["documents"]
+
+# Set path to results for full set of treatments (all six), or the subset of treatments (1, 2, 4, 5)
+results_full_set_path = documents_file_path + "repetitions_alltreatments.joblib"
+results_sub_set_path = documents_file_path + "repetitions_subsettreatments.joblib"
 
 END_OF_X = 48
 START_OF_X = 2
 TREAT_NAME = "treat"
 Y_NAME = "buttonpresses"
 CONTROL_INDEX = 7
-PATH = r"C:\Users\klaus\Desktop\Projects\Deep Learning\master-thesis\expdata.csv"
+PATH = data_file_path
 
 # Parameters used in the Final Model
 params_allmodels = {
@@ -166,19 +181,18 @@ CV_Results = Matcher.cross_validate(
 
 min_df, max_df = getMinMax(CV_Results.rep_stats)
     
-# Adjust final path
-# writer = pd.ExcelWriter(r"C:\Users\klaus\Documents\repetitions_alltreatments.xlsx", engine='xlsxwriter') # Change directory here according to subset of treatments
-writer = pd.ExcelWriter(r"C:\Users\klaus\Documents\repetitions_subsettreatments.xlsx", engine='xlsxwriter')
-# writer = pd.ExcelWriter(r"C:\Users\klaus\Documents\overfit.xlsx", engine='xlsxwriter')
+# Save the Excel tables with results
+# writer = pd.ExcelWriter(results_full_set_path, engine='xlsxwriter') # Change directory here according to subset of treatments
+writer = pd.ExcelWriter(results_sub_set_path, engine='xlsxwriter')
+# writer = pd.ExcelWriter(documents_file_path + "overfit.xlsx", engine='xlsxwriter')
+
 CV_Results.overall_stats.to_excel(writer, sheet_name='Overall')
 min_df.to_excel(writer, sheet_name='Minimum')
 max_df.to_excel(writer, sheet_name='Maximum')
 
 writer.close()
 
-import joblib
-
-# save the results to a joblib file
-# joblib.dump(CV_Results, "C:/Users/klaus/Documents/repetitions_alltreatments.joblib") # Change directory here according to subset of treatments
-joblib.dump(CV_Results, "C:/Users/klaus/Documents/repetitions_subsettreatments.joblib")
-# joblib.dump(CV_Results, "C:/Users/klaus/Documents/overfit.joblib")
+# Save the results in the "joblib" format
+joblib.dump(CV_Results, results_full_set_path) # Change directory here according to subset of treatments
+joblib.dump(CV_Results, results_sub_set_path)
+joblib.dump(CV_Results, documents_file_path + "overfit.joblib")

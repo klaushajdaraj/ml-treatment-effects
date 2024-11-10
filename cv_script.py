@@ -3,17 +3,25 @@
 @author: Klaus Hajdaraj
 """
 import pandas as pd 
+import yaml
 import json
 from mlmethods import *
 
+# Read file paths
+with open('config.yaml', 'r') as file:
+    file_path = yaml.safe_load(file)
+
+# Read the path to data and params
+data_file_path = file_path["paths"]["data"]
+params_file_path = file_path["paths"]["params"]
+
 possible_treatments = ["treat_" + str(i) for i in range(1, 7)]
-df = pd.read_csv(
-    r"C:\Users\klaus\Desktop\Projects\Deep Learning\master-thesis\expdata.csv")
+df = pd.read_csv(data_file_path)
 
 
 def save_params(name:str, params:dict):
     filename =\
-        'C:/Users/klaus/Documents/Params/'+ name + '.txt'
+        params_file_path + name + '.txt'
     with open(filename, 'w') as file:
         file.write(json.dumps(params))
 
