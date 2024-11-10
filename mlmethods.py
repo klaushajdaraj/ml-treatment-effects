@@ -219,29 +219,29 @@ class ShrinkageEstimators:
         Returns
         -------
         df_summary : pd.DataFrame
-            Contains Hitsch Matched treatment assignments. Columns are treatment
+            Contains Misra Matched treatment assignments. Columns are treatment
             + overall, rows are Y values and number of matched Ys.
         """
 
         tau_alt, __ = self.shrinkJamesStein(tau_preds)
-        df_matched_alt = HitschMatching.getMatchingPredictions(
+        df_matched_alt = MisraMatching.getMatchingPredictions(
             self.data, tau_alt, prefix + "_JS_individ"
         )
 
         tau_alt2, __ = self.shrinkJamesStein(
             tau_preds, towards_overall_mean=True)
-        df_matched_alt2 = HitschMatching.getMatchingPredictions(
+        df_matched_alt2 = MisraMatching.getMatchingPredictions(
             self.data, tau_alt2, prefix + "_JS_pool"
         )
 
         predsBAdj, __ = self.shrinkBiasAdjustment(tau_preds)
-        df_matched_BAdj = HitschMatching.getMatchingPredictions(
+        df_matched_BAdj = MisraMatching.getMatchingPredictions(
             self.data, predsBAdj, prefix + "_BAdj_individ"
         )
 
         predsBAdj2, __ = self.shrinkBiasAdjustment(
             tau_preds, towards_overall_mean=True)
-        df_matched_BAdj2 = HitschMatching.getMatchingPredictions(
+        df_matched_BAdj2 = MisraMatching.getMatchingPredictions(
             self.data, predsBAdj2, prefix + "_BAdj_pool"
         )
 
@@ -562,7 +562,7 @@ class CausalNets(HTEestimator):
             print(self.optimal_params[treatment]['params'])  
 
 
-class HitschMatching:
+class MisraMatching:
     def __init__(self, params_allmodels):
         self.params_allmodels = params_allmodels
 
@@ -576,7 +576,7 @@ class HitschMatching:
         return_assignments=False,
     ):
         """
-        Generates a summary dataframe for Hitsch Matched outcomes and respective
+        Generates a summary dataframe for Misra Matched outcomes and respective
         counts.
 
         Parameters
@@ -612,7 +612,7 @@ class HitschMatching:
         else:
             model = model.fit(data_train)
         tau_pred = model.predict(data_test.iloc[:, START_OF_X:END_OF_X])
-        summary_stats_df = HitschMatching.getMatchingPredictions(
+        summary_stats_df = MisraMatching.getMatchingPredictions(
             data_test, tau_pred, model.__name__
         )
         if Shrinker:
@@ -655,16 +655,16 @@ class HitschMatching:
 
         Returns
         -------
-        Results : HitschMatching.CV_Results object
+        Results : MisraMatching.CV_Results object
             Contains the history and summaries of the performed repeated
             KFold Crossvalidation. See in its docstring for more information.
 
         """
         print(
-            f"Starting Repeated KFold Hitsch Matching with\
+            f"Starting Repeated KFold Misra Matching with\
               \n{repetitions} repetitions of {folds} folds."
         )
-        Results = HitschMatching.CV_Results(folds=folds, reps=repetitions)
+        Results = MisraMatching.CV_Results(folds=folds, reps=repetitions)
         fold_iterator = RepeatedKFold(
             n_splits=folds, n_repeats=repetitions, random_state=42
         )
@@ -821,7 +821,7 @@ class HitschMatching:
     @staticmethod
     def getMatchingPredictions(df, tau_pred, model_name: str):
         """
-        Get the sum of outcomes for the Hitsch Matched predictions.
+        Get the sum of outcomes for the Misra Matched predictions.
 
         Parameters
         ----------

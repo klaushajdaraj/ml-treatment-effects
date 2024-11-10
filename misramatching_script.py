@@ -151,7 +151,7 @@ def getTreatDiff(stats):
 
 df = pd.read_csv(PATH)
 used_treatments = ['treat_1', 'treat_2', 'treat_3', 'treat_4', 'treat_5', 'treat_6'] # Remove 'treat_3' and 'treat_6' when running subtreatments analysis
-Matcher = HitschMatching(params_allmodels)
+Matcher = MisraMatching(params_allmodels)
 CV_Results = Matcher.cross_validate(
     data=df,
     repetitions=100,
