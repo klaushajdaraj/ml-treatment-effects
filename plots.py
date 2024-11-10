@@ -6,19 +6,32 @@
 import warnings
 warnings.filterwarnings("ignore")
 
+import yaml
 import joblib
 import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
+
+
+# Read file paths
+with open('config.yaml', 'r') as file:
+    file_path = yaml.safe_load(file)
+
+# Read the path to my Documents folder in my computer
+documents_file_path = file_path["paths"]["documents"]
+
+# Set path to results for full set of treatments (all six), or the subset of treatments (1, 2, 4, 5)
+results_full_set_path = documents_file_path + "repetitions_alltreatments.joblib"
+results_sub_set_path = documents_file_path + "repetitions_subsettreatments.joblib"
 
 # Set the theme for all graphs
 sns.set_theme(style='white')
 
 def get_data(full_data=True):
     if full_data:
-        filename = r"C:\Users\klaus\Documents\repetitions_alltreatments.joblib"
+        filename = results_full_set_path
     else:
-        filename = r"C:\Users\klaus\Documents\repetitions_subsettreatments.joblib"
+        filename = results_sub_set_path
     with open(filename, "rb") as file:
         CV_Results = joblib.load(file)  
     estimators = [x for x in CV_Results.overall_stats.index if x.endswith("Y")]
