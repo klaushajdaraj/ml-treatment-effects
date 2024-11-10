@@ -64,10 +64,12 @@ To change the paths, follow the steps:
 1. Create a file names `config.yaml` in the same working directory.
 2. Inside the config file, set the paths as it follows:
 
-`paths:
+```yaml
+paths:
   documents: Paste the path to the directory containing the joblib files for full and sub- treatment set.
   data: Paste the path to the directory containing the data file: `expdata.csv`.
-  params: Paste the path to the directory containing the parameters.`
+  params: Paste the path to the directory containing the parameters.
+```
 
 "# machine-learning-treatment-effects"
 "# ml-treatment-effects"
