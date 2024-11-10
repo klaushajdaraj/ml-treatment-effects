@@ -49,6 +49,12 @@ On Windows:
 pip install -r requirements.txt
 ```
 
+5. To deactivate your virtual environment:
+
+```console
+~ deactivate
+```
+
 ## Files
 
 ### requirements.txt
