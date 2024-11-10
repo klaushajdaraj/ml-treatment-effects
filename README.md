@@ -32,12 +32,12 @@ pip install virtualenv
 ```
 3. To activate your virtual environment:
 
-On Mac:
+- On Mac:
 ```console
 source env/bin/activate
 ```
 
-On Windows:
+- On Windows:
 ```console
  env/Scripts/activate.bat //In CMD
  env/Scripts/Activate.ps1 //In Powershel
