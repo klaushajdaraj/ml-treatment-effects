@@ -49,7 +49,7 @@ Raw data of the experiment from Opitz et al. (2024).
 
 Script for hyper-parameter tuning of the two ML-Methods.
 
-### Analytics.ipynb
+### exploratory_data_analysis.ipynb
 
 The main Jupyter notebook for creating descriptional statistics, result tables and figures.
 
