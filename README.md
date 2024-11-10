@@ -58,5 +58,16 @@ The main Jupyter notebook for creating descriptional statistics, result tables a
 Performs the Hitsch Matching with the two ML methods. Adjust the `used_treatments` list for the subset of treatments. In addition, there can be found the dictionary with used hyperparameters.
 
 Please note that the paths in the python scripts have to be adjusted to the user's working directory! Therefore, it is necessary to change the paths according to your local directories.
+
+To change the paths, follow the steps:
+
+1. Create a file names `config.yaml` in the same working directory.
+2. Inside the config file, set the paths as it follows:
+
+paths:
+  documents: Paste the path to the directory containing the joblib files for full and sub- treatment set.
+  data: Paste the path to the directory containing the data file: `expdata.csv`.
+  params: Paste the path to the directory containing the parameters.
+
 "# machine-learning-treatment-effects"
 "# ml-treatment-effects"
