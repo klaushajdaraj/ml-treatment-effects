@@ -32,6 +32,7 @@ pip install virtualenv
 2. To use venv in your project, in your terminal, cd to the project folder in your terminal, and run the following command:
 
 ```console
+git clone git@github.com:klaushajdaraj/ml-treatment-effects.git
  cd ml-treatment-effects
  python3.9.13 -m venv env
 ```
