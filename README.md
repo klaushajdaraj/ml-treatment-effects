@@ -33,8 +33,8 @@ pip install virtualenv
 
 ```console
 git clone git@github.com:klaushajdaraj/ml-treatment-effects.git
- cd ml-treatment-effects
- python3.9.13 -m venv env
+cd ml-treatment-effects
+python3.9.13 -m venv env
 ```
 3. To activate your virtual environment:
 
