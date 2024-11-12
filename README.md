@@ -2,7 +2,7 @@
 
 <p align="left">
 <!-- <img width=15% src="https://dai.lids.mit.edu/wp-content/uploads/2018/06/Logo_DAI_highres.png" alt=“AI” /> -->
- <img width=15% src="https://ff13.fastforwardlabs.com/figures/ff13-14.png" alt=“AI” />
+ <img width=50% src="https://ff13.fastforwardlabs.com/figures/ff13-14.png" alt=“AI” />
 <i>Master Thesis Paper, submitted and presented at CERGE-EI.</i>
 </p>
 
