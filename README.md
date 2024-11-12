@@ -63,41 +63,41 @@ pip install -r requirements.txt
 
 ## Files
 
-### requirements.txt
+### `requirements.txt`
 
 The file contains the required packages, libraries and dependencies. To install the requirements, run in the terminal:
 
 `pip install -r requirements.txt`
 
-### 1. repetitions_subsettreatments.joblib
+### `repetitions_subsettreatments.joblib`
 
 Contains the CV_Results (see mlmethods) saved from the hundred times performed three-folded cross validation Hitsch Matching for two ML-Methods. Only treatments 1, 2, 4 and 5 were considered.
 
-### 2. repetitions_alltreatments.joblib
+### `repetitions_alltreatments.joblib`
 
 Contains the CV_Results (see mlmethods) saved from the hundred times performed three-folded cross validation Hitsch Matching for two ML-Methods. All treatments were considered.
 
-### 3. plots.py
+### `plots.py`
 
 Code for creating plots used in the Analytics.ipynb which is the main Jupyter notebook for evaluating the results.
 
-### 4. mlmethods.py
+### `mlmethods.py`
 
 Main script with two ML-Method classes and the code for Hitsch Matching. It is only used for importing on the main script, empty `main()`.
 
-### 5. expdata.csv
+### `expdata.csv`
 
 Raw data of the experiment from Opitz et al. (2024).
 
-### 6. cv_script.py
+### `cv_script.py`
 
 Script for hyper-parameter tuning of the two ML-Methods.
 
-### 7. exploratory_data_analysis.ipynb
+### `exploratory_data_analysis.ipynb`
 
 The main Jupyter notebook for creating descriptional statistics, result tables and figures.
 
-### 8. misramatching_script.py
+### `misramatching_script.py`
 
 Performs the Hitsch Matching with the two ML methods. Adjust the `used_treatments` list for the subset of treatments. In addition, there can be found the dictionary with used hyperparameters.
 
