@@ -1,4 +1,4 @@
 paths:
-  documents: C:\Users\klaus\Documents\
-  data: C:\Users\klaus\Desktop\Projects\Deep Learning\master-thesis\expdata.csv
-  params: C:/Users/klaus/Documents/Params/
+  documents: /Users/klaushajdaraj/Windows Laptop Files/Thesis - All Files/Documents Folder - Thesis Empirical Results/
+  data: /Users/klaushajdaraj/Projects/ml-treatment-effects/expdata.csv
+  params: /Users/klaushajdaraj/Windows Laptop Files/Thesis - All Files/Documents Folder - Thesis Empirical Results/Params/
