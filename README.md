@@ -23,7 +23,7 @@ Ran on:
 - tensoflow==2.10.0
 - protobuf==3.11.3
 
-## How to set up the virtual environment
+## How to set up the virtual environment using venv
 
 1. You can install venv to your host Python by running this command in your terminal:
 
@@ -60,6 +60,15 @@ pip install -r requirements.txt
 
 ```console
 ~ deactivate
+```
+## How to set up the virtual environment using conda (Mac)
+
+```console
+conda create -n ml_treatments_env python=3.9.13
+
+source activate base # (or use: source ~/.zshrc)
+
+conda activate ml_treatments_env
 ```
 
 ## Files
