@@ -106,7 +106,7 @@ Please note that the paths in the python scripts have to be adjusted to the user
 
 To change the paths, follow the steps:
 
-1. Create a file names `config.yaml` in the same working directory.
+1. Create a file named `config.yaml` in the same working directory.
 2. Inside the config file, set the paths as it follows:
 
 ```yaml
