@@ -179,7 +179,7 @@ def getMinMax(df_list):
     min_df = df_list[0].copy()
     max_df = df_list[0].copy()
     for rowIndex, row in min_df.iterrows():
-        for columnIndex, vlaue in row.items():
+        for columnIndex, value in row.items():
             min_df.loc[rowIndex, columnIndex] = min(
                 [df.loc[rowIndex, columnIndex] for df in df_list]
             )
