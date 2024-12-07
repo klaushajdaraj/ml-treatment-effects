@@ -4,6 +4,7 @@
 """
 
 import sys
+
 print(f"I am a Python version: {sys.version}")
 import pandas as pd
 import statsmodels.formula.api as smf
@@ -18,7 +19,8 @@ from abc import ABC, abstractmethod
 from sklearn.preprocessing import StandardScaler
 from causal_nets.causal_nets.utils import CoeffNet
 from econml.grf import CausalForest
-PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION="python"
+
+PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION = "python"
 import tensorflow as tf
 
 import time
@@ -31,18 +33,20 @@ Y_NAME = "buttonpresses"
 CONTROL_INDEX = 7
 RS = 42
 
-        
+
 def printfull(df):
     with pd.option_context("display.max_rows", None, "display.max_columns", None):
         print(df)
-        
+
+
 def standardise(data):
     scaler = StandardScaler()
     scaler.fit(data)
     return scaler.transform(data)
 
+
 def getTreatmentSnippet(data, treatment_name):
-    '''
+    """
     Get dataframe snippet with only control and respective treatment
 
     Parameters
@@ -57,7 +61,7 @@ def getTreatmentSnippet(data, treatment_name):
     dataT : pd.DataFrame
         Dataframe only containing observations with the the respective
         treatment and the control variable, not with other treatments.
-    '''
+    """
     dataT = data.loc[
         (
             (data[TREAT_NAME] == CONTROL_INDEX)
@@ -68,33 +72,34 @@ def getTreatmentSnippet(data, treatment_name):
 
 
 def t_risk(data_train, data_test, treatment, tau_pred):
-    '''
+    """
     [(Y - M(X) ) - (W - P(X) )*tau_pred ]^2
-     
+
     Y: real values
     M(X): E[Y|X] e.g. from regression or lasso
-         
+
     W: Treated oder Control (T)
     P(X): Propensity Score
-    '''
+    """
     X_test, Y_test, T_test = getXY(data_test, treatment)
     X_train, Y_train, T_train = getXY(data_train, treatment)
-    
+
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
-    
+
     model_m = LassoCV(max_iter=1000)
     model_m.fit(X=X_train, y=Y_train)
-    
-    model_p = LogisticRegressionCV(penalty='l1', max_iter=1000, solver='liblinear')
+
+    model_p = LogisticRegressionCV(penalty="l1", max_iter=1000, solver="liblinear")
     model_p.fit(X=X_train, y=T_train)
-    
+
     m = model_m.predict(X_test)
     p = model_p.predict(X_test)
-    
-    score = sum ( np.square(( Y_test - m ) - ( T_test - p ) * tau_pred ))
+
+    score = sum(np.square((Y_test - m) - (T_test - p) * tau_pred))
     return score
+
 
 class Timer:
     def __init__(self):
@@ -109,15 +114,25 @@ class Timer:
         seconds = int(round(time_passed % 60))
         print(f"It took {minutes} minutes and {seconds} seconds.")
         self.start = now
-        
+
+
 class ShrinkageEstimators:
     def __init__(self, data):
-        self.treatments = [1,2,3,4,5,6] # Change this to [1, 2, 4, 5] in case of running only subtreatments
+        self.treatments = [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+        ]  # Change this to [1, 2, 4, 5] in case of running only subtreatments
         self.data = data
         self.getATEvar()
         self.getTauVars()
-        self.ate = data[data["treat"].isin(self.treatments)].buttonpresses.mean() -\
-            data[data["treat"]==CONTROL_INDEX].buttonpresses.mean()
+        self.ate = (
+            data[data["treat"].isin(self.treatments)].buttonpresses.mean()
+            - data[data["treat"] == CONTROL_INDEX].buttonpresses.mean()
+        )
 
     def shrinkJamesStein(self, preds, towards_overall_mean=False):
         """Shrink predictions in line with James Stein estimator.
@@ -140,8 +155,7 @@ class ShrinkageEstimators:
             Shrinking factor.
         """
         n = len(preds)
-        c = 1 - (n - 3) * self.var_ate / \
-            (np.square(preds - preds.mean()).sum())
+        c = 1 - (n - 3) * self.var_ate / (np.square(preds - preds.mean()).sum())
         if towards_overall_mean:
             preds_altered = (preds - self.ate) * c + self.ate
         else:
@@ -228,8 +242,7 @@ class ShrinkageEstimators:
             self.data, tau_alt, prefix + "_JS_individ"
         )
 
-        tau_alt2, __ = self.shrinkJamesStein(
-            tau_preds, towards_overall_mean=True)
+        tau_alt2, __ = self.shrinkJamesStein(tau_preds, towards_overall_mean=True)
         df_matched_alt2 = MisraMatching.getMatchingPredictions(
             self.data, tau_alt2, prefix + "_JS_pool"
         )
@@ -239,8 +252,7 @@ class ShrinkageEstimators:
             self.data, predsBAdj, prefix + "_BAdj_individ"
         )
 
-        predsBAdj2, __ = self.shrinkBiasAdjustment(
-            tau_preds, towards_overall_mean=True)
+        predsBAdj2, __ = self.shrinkBiasAdjustment(tau_preds, towards_overall_mean=True)
         df_matched_BAdj2 = MisraMatching.getMatchingPredictions(
             self.data, predsBAdj2, prefix + "_BAdj_pool"
         )
@@ -280,7 +292,7 @@ def getXY(data, treatment=None):
 
 
 class HTEestimator(ABC):
-    
+
     def __init__(self, treatment_names):
         self.models = dict(zip(treatment_names, [None] * len(treatment_names)))
 
@@ -294,52 +306,51 @@ class HTEestimator(ABC):
 
     def cross_validate(self, data, gridsearch_params, folds=3, random_search=None):
         self.optimal_params = {
-            treatment: dict(
-                params=None, score=10**10) for treatment in self.models.keys()}
+            treatment: dict(params=None, score=10**10)
+            for treatment in self.models.keys()
+        }
         fold_iterator = KFold(folds)
         i = 0
         if random_search:
             if 0 < random_search < 1:
                 k = int(len(gridsearch_params) * random_search)
-            elif random_search >=1:
+            elif random_search >= 1:
                 k = random_search
             else:
                 raise ValueError("random_search has to be >0 but finite.")
-            gridsearch_params = random.sample(
-                    gridsearch_params, k)
+            gridsearch_params = random.sample(gridsearch_params, k)
         n = len(gridsearch_params)
         for treatment, __ in self.models.items():
             for params in gridsearch_params:
                 i += 1
                 for train, test in fold_iterator.split(data):
-                    data_train = getTreatmentSnippet(
-                        data.iloc[train], treatment)
-                    data_test = getTreatmentSnippet(
-                        data.iloc[test], treatment)
+                    data_train = getTreatmentSnippet(data.iloc[train], treatment)
+                    data_test = getTreatmentSnippet(data.iloc[test], treatment)
 
                     tau_pred = self.trainPredictSingleTreatment(
-                        params, data_train, data_test, treatment)
+                        params, data_train, data_test, treatment
+                    )
 
                     score = t_risk(data_train, data_test, treatment, tau_pred)
-                    if score < self.optimal_params[treatment]['score']:
-                        self.optimal_params[treatment]['params'] = params
-                        self.optimal_params[treatment]['score'] = score
-                print(f'Finished {i}/{n}')
-            print(f'Finished training treatment {treatment}.')
-            print('Best params were:')
-            print(self.optimal_params[treatment]['params'])
+                    if score < self.optimal_params[treatment]["score"]:
+                        self.optimal_params[treatment]["params"] = params
+                        self.optimal_params[treatment]["score"] = score
+                print(f"Finished {i}/{n}")
+            print(f"Finished training treatment {treatment}.")
+            print("Best params were:")
+            print(self.optimal_params[treatment]["params"])
+
 
 class CausalForestHTE(HTEestimator):
     __name__ = "CausalForest"
 
     def trainPredictSingleTreatment(self, params, data_train, data_test, treatment):
-        X_train, Y_train, T_train = getXY(
-            data_train, treatment)
-        X_test, Y_test, T_test = getXY(
-            data_test, treatment)
+        X_train, Y_train, T_train = getXY(data_train, treatment)
+        X_test, Y_test, T_test = getXY(data_test, treatment)
 
         model = CausalForest(
-            n_estimators=1000, criterion='mse', random_state=RS, **params)
+            n_estimators=1000, criterion="mse", random_state=RS, **params
+        )
         model.fit(X=X_train, T=T_train, y=Y_train)
 
         tau_pred = np.concatenate(model.predict(X_test))
@@ -380,7 +391,6 @@ class CausalForestHTE(HTEestimator):
 
             self.models[key] = model
         return self
-    
 
     def predict(self, X):
         """Predict HTE for all six treatments given X.
@@ -409,9 +419,11 @@ class CausalNets(HTEestimator):
     __name__ = "CausalNet"
 
     def trainPredictSingleTreatment(
-            self, params, data_train, data_test,  treatment, return_score=True):
+        self, params, data_train, data_test, treatment, return_score=True
+    ):
         data_train, data_valid = train_test_split(
-            data_train, test_size=0.3, random_state=RS)
+            data_train, test_size=0.3, random_state=RS
+        )
 
         X_train, Y_train, T_train = getXY(data_train, treatment)
 
@@ -467,8 +479,7 @@ class CausalNets(HTEestimator):
                 "verbose": False,
             }
 
-        data_train, data_test = train_test_split(
-            data, test_size=0.3, random_state=42)
+        data_train, data_test = train_test_split(data, test_size=0.3, random_state=42)
 
         for treatment, __ in self.models.items():
             data1_train = getTreatmentSnippet(data_train, treatment)
@@ -476,7 +487,7 @@ class CausalNets(HTEestimator):
 
             data1_test = getTreatmentSnippet(data_test, treatment)
             X_valid, Y_valid, T_valid = getXY(data1_test, treatment)
-            
+
             model = CoeffNet(**params[treatment]["params"])
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
@@ -484,7 +495,7 @@ class CausalNets(HTEestimator):
                     training_data=[X_train, T_train, Y_train],
                     validation_data=[X_valid, T_valid, Y_valid],
                 )
-                
+
             self.models[treatment] = {"betas_model": betas_model, "model": model}
         return self
 
@@ -511,36 +522,37 @@ class CausalNets(HTEestimator):
             )
             pred_df[treatment] = np.concatenate(tau_pred)
         return pred_df
-    
+
     def cross_validate(self, data, gridsearch_params, folds=3, random_search=None):
         self.optimal_params = {
-            treatment: dict(
-                params=None, score=10**10) for treatment in self.models.keys()}
+            treatment: dict(params=None, score=10**10)
+            for treatment in self.models.keys()
+        }
         fold_iterator = KFold(folds)
         i = 0
         if random_search:
             if 0 < random_search < 1:
                 k = int(len(gridsearch_params) * random_search)
-            elif random_search >=1:
+            elif random_search >= 1:
                 k = random_search
             else:
                 raise ValueError("random_search has to be >0 but finite.")
-            gridsearch_params = random.sample(
-                    gridsearch_params, k)
+            gridsearch_params = random.sample(gridsearch_params, k)
         n = len(gridsearch_params)
         for treatment, __ in self.models.items():
             for params in gridsearch_params:
                 i += 1
-                for train, test in fold_iterator.split(data):                   
+                for train, test in fold_iterator.split(data):
                     data_train = getTreatmentSnippet(data.iloc[train], treatment)
                     X_train, Y_train, T_train = getXY(data_train, treatment)
 
                     data_valid, data_test = train_test_split(
-                        data.iloc[test], test_size=0.5)
-                
+                        data.iloc[test], test_size=0.5
+                    )
+
                     X_valid, Y_valid, T_valid = getXY(data_valid, treatment)
                     X_test, Y_test, T_test = getXY(data_test, treatment)
-                    
+
                     model = CoeffNet(**params)
                     with warnings.catch_warnings():
                         warnings.simplefilter("ignore")
@@ -550,16 +562,20 @@ class CausalNets(HTEestimator):
                         )
                     tau_pred, mu0pred = model.retrieve_coeffs(
                         betas_model=betas_model, input_value=X_test
-                        )
-                    predictions = np.concatenate(mu0pred) + np.concatenate(tau_pred) * T_test
+                    )
+                    predictions = (
+                        np.concatenate(mu0pred) + np.concatenate(tau_pred) * T_test
+                    )
                     score = sum(np.square(predictions - T_test))
-                    if score < self.optimal_params[treatment]['score']:
-                        self.optimal_params[treatment]['params'] = params
-                        self.optimal_params[treatment]['score'] = score
-                print(f'Finished {i}/{n*6}') # Change this to 'n*4' when running the subtreatments analysis
-            print(f'Finished training treatment {treatment}.')
-            print('Best params were:')
-            print(self.optimal_params[treatment]['params'])  
+                    if score < self.optimal_params[treatment]["score"]:
+                        self.optimal_params[treatment]["params"] = params
+                        self.optimal_params[treatment]["score"] = score
+                print(
+                    f"Finished {i}/{n*6}"
+                )  # Change this to 'n*4' when running the subtreatments analysis
+            print(f"Finished training treatment {treatment}.")
+            print("Best params were:")
+            print(self.optimal_params[treatment]["params"])
 
 
 class MisraMatching:
@@ -633,7 +649,7 @@ class MisraMatching:
         treatment_names,
         repetitions=1,
         folds=3,
-        used_estimators=[CausalNets]
+        used_estimators=[CausalNets],
     ):
         """
         Perform the repeated KFold cross-validation and returs the results.
@@ -672,9 +688,11 @@ class MisraMatching:
             data_train = data.iloc[train].reset_index(drop=True)
             # data_test = data_train.copy() # Uncomment this in case of preferring to reuse training data as test set
             # test = train
-            data_test = data.iloc[test].reset_index(drop=True) # Comment this in case of not preferring to use test data as test set
-            print('TRAIN DATA DIMENSIONS ', data_train.shape)
-            print('TEST DATA DIMENSIONS ', data_test.shape)
+            data_test = data.iloc[test].reset_index(
+                drop=True
+            )  # Comment this in case of not preferring to use test data as test set
+            print("TRAIN DATA DIMENSIONS ", data_train.shape)
+            print("TEST DATA DIMENSIONS ", data_test.shape)
 
             Shrinker = ShrinkageEstimators(data_test)
 
@@ -685,7 +703,7 @@ class MisraMatching:
                         data_train,
                         data_test,
                         treatment_names,
-                        Shrinker, # Remove the 'Shrinker' in case of not preferring to use variance shrinkers
+                        Shrinker,  # Remove the 'Shrinker' in case of not preferring to use variance shrinkers
                         return_assignments=True,
                     )
                     for ModelClass in used_estimators
@@ -738,8 +756,7 @@ class MisraMatching:
             """
             self.total_folds = folds
             self.total_reps = reps
-            self.summarystats = [
-                [None for f in range(folds)] for r in range(reps)]
+            self.summarystats = [[None for f in range(folds)] for r in range(reps)]
             self.history = [pd.DataFrame() for r in range(reps)]
 
         def appendFoldStats(self, dataframes, ates):
@@ -884,8 +901,7 @@ class MisraMatching:
         ]
         y_list.append(sum(y_list))
 
-        n_list = [int(len(data[data[treatment] == 1]))
-                  for treatment in used_treatments]
+        n_list = [int(len(data[data[treatment] == 1])) for treatment in used_treatments]
         n_list.append(sum(n_list))
 
         summary_df = pd.DataFrame.from_dict(
@@ -896,16 +912,5 @@ class MisraMatching:
         return summary_df
 
 
-
-
-
 if __name__ == "__main__":
     pass
-  
-    
-    
-    
-
-    
-    
-    
