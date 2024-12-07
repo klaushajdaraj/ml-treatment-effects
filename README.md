@@ -111,6 +111,8 @@ The main Jupyter notebook for creating descriptional statistics, result tables a
 
 Performs the Hitsch Matching with the two ML methods. Adjust the `used_treatments` list for the subset of treatments. In addition, there can be found the dictionary with used hyperparameters.
 
+# IMPORTANT
+
 Please note that the paths in the python scripts have to be adjusted to the user's working directory! Therefore, it is necessary to change the paths according to your local directories.
 
 To change the paths, follow the steps:
