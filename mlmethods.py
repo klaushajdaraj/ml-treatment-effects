@@ -25,6 +25,9 @@ import tensorflow as tf
 
 import time
 
+from typing import List, Optional, Union, Tuple, Dict, Any, Type
+from typing_extensions import Self
+
 END_OF_X = 48
 START_OF_X = 2
 SEED = 42
@@ -34,18 +37,18 @@ CONTROL_INDEX = 7
 RS = 42
 
 
-def printfull(df):
+def printfull(df: pd.DataFrame) -> pd.DataFrame:
     with pd.option_context("display.max_rows", None, "display.max_columns", None):
         print(df)
 
 
-def standardise(data):
+def standardise(data: pd.DataFrame) -> pd.DataFrame:
     scaler = StandardScaler()
     scaler.fit(data)
     return scaler.transform(data)
 
 
-def getTreatmentSnippet(data, treatment_name):
+def getTreatmentSnippet(data: pd.DataFrame, treatment_name: str) -> pd.DataFrame:
     """
     Get dataframe snippet with only control and respective treatment
 
@@ -71,7 +74,7 @@ def getTreatmentSnippet(data, treatment_name):
     return dataT
 
 
-def t_risk(data_train, data_test, treatment, tau_pred):
+def t_risk(data_train: pd.DataFrame, data_test: pd.DataFrame, treatment: int, tau_pred: float) -> float:
     """
     [(Y - M(X) ) - (W - P(X) )*tau_pred ]^2
 
@@ -105,7 +108,7 @@ class Timer:
     def __init__(self):
         self.start = time.perf_counter()
 
-    def track(self, text=None):
+    def track(self, text: str = None) -> None:
         now = time.perf_counter()
         if text:
             print(text)
@@ -117,7 +120,7 @@ class Timer:
 
 
 class ShrinkageEstimators:
-    def __init__(self, data):
+    def __init__(self, data: pd.DataFrame):
         self.treatments = [
             1,
             2,
@@ -134,7 +137,7 @@ class ShrinkageEstimators:
             - data[data["treat"] == CONTROL_INDEX].buttonpresses.mean()
         )
 
-    def shrinkJamesStein(self, preds, towards_overall_mean=False):
+    def shrinkJamesStein(self, preds: pd.Series, towards_overall_mean: bool = False) -> Tuple[pd.Series, float]:
         """Shrink predictions in line with James Stein estimator.
 
         Parameters
@@ -162,7 +165,7 @@ class ShrinkageEstimators:
             preds_altered = (preds - preds.mean()) * c + preds.mean()
         return preds_altered, c
 
-    def shrinkBiasAdjustment(self, preds, towards_overall_mean=False):
+    def shrinkBiasAdjustment(self, preds: pd.Series, towards_overall_mean: bool = False) -> Tuple[pd.Series, float]:
         """Shrink predictions according the Chen/Zimmermann shrinkage estimator.
 
         Parameters
@@ -184,7 +187,7 @@ class ShrinkageEstimators:
             preds_alt = c * preds + (1 - c) * preds.mean()
         return preds_alt, c
 
-    def getTauVars(self):
+    def getTauVars(self) -> Self:
         """Get the variance of all 6 treatments.
 
         Measured by the respective variance of the OLS estimator in a regression
@@ -205,7 +208,7 @@ class ShrinkageEstimators:
         self.tau_vars = tau_vars
         return self
 
-    def getATEvar(self):
+    def getATEvar(self) -> Self:
         """Performs a OLS regression to retrieve variance of the ATE.
 
         The regression is Y ~ beta_0 + beta_1 * Treated_i + e, where Treated_i
@@ -220,7 +223,7 @@ class ShrinkageEstimators:
         self.var_ate = model.bse["T"] ** 2
         return self
 
-    def shrink(self, tau_preds, prefix="shrunk"):
+    def shrink(self, tau_preds: pd.DataFrame, prefix: Optional[str]) -> pd.DataFrame:
         """Shrink predictions with all four shrinkage methods.
 
         Parameters
@@ -264,26 +267,30 @@ class ShrinkageEstimators:
         return df_summary
 
 
-def getXY(data, treatment=None):
+def getXY(
+    data: pd.DataFrame, 
+    treatment: Optional[int] = None
+) -> Union[Tuple[pd.DataFrame, pd.Series], Tuple[pd.DataFrame, pd.Series, pd.Series]]:
     """
     Split X, Y (and T) values from the main imported data.
 
     Parameters
     ----------
     data : pd.DataFrame
-        Contains the formated data from round 1 of the experiment.
-    index_t : int, optional
-        Whether and what treatment dummy vector to additionally return.
+        Contains the formatted data from round 1 of the experiment.
+    treatment : int, optional
+        Indicates which treatment dummy vector to additionally return.
         The default is None.
 
     Returns
     -------
-    X, Y, (T): pd.Dataframe, pd.Series, pd Series
-        Respective X, Y (and T) dataframes / vectors from inputed dataframe.
+    Tuple[pd.DataFrame, pd.Series] or Tuple[pd.DataFrame, pd.Series, pd.Series]
+        - If `treatment` is None, returns (X, Y)
+        - If `treatment` is not None, returns (X, Y, T)
     """
     X = data.iloc[:, START_OF_X:END_OF_X]
     Y = data[Y_NAME]
-    if treatment:
+    if treatment is not None:
         index_t = data.columns.get_loc(treatment)
         T = data.iloc[:, index_t]
         return X, Y, T
@@ -304,7 +311,12 @@ class HTEestimator(ABC):
     def predict():
         pass
 
-    def cross_validate(self, data, gridsearch_params, folds=3, random_search=None):
+    def cross_validate(
+    self, 
+    data: pd.DataFrame, 
+    gridsearch_params: List[Dict[str, Any]], 
+    folds: int = 3, 
+    random_search: Optional[Union[int, float]] = None) -> None:
         self.optimal_params = {
             treatment: dict(params=None, score=10**10)
             for treatment in self.models.keys()
@@ -344,7 +356,14 @@ class HTEestimator(ABC):
 class CausalForestHTE(HTEestimator):
     __name__ = "CausalForest"
 
-    def trainPredictSingleTreatment(self, params, data_train, data_test, treatment):
+    
+    def trainPredictSingleTreatment(
+        self, 
+        params: Dict[str, Any], 
+        data_train: pd.DataFrame, 
+        data_test: pd.DataFrame, 
+        treatment: int
+    ) -> np.ndarray:
         X_train, Y_train, T_train = getXY(data_train, treatment)
         X_test, Y_test, T_test = getXY(data_test, treatment)
 
@@ -356,7 +375,11 @@ class CausalForestHTE(HTEestimator):
         tau_pred = np.concatenate(model.predict(X_test))
         return tau_pred
 
-    def fit(self, data, params=dict()):
+    def fit(
+        self, 
+        data: pd.DataFrame, 
+        params: Dict[str, Dict[str, Any]] = dict()
+    ) -> Self:
         """
         Trains the Causal Forests model(s) on the given data with the given
         parameters.
@@ -392,9 +415,8 @@ class CausalForestHTE(HTEestimator):
             self.models[key] = model
         return self
 
-    def predict(self, X):
+    def predict(self, X: pd.DataFrame) -> pd.DataFrame:
         """Predict HTE for all six treatments given X.
-
 
         Parameters
         ----------
@@ -419,8 +441,14 @@ class CausalNets(HTEestimator):
     __name__ = "CausalNet"
 
     def trainPredictSingleTreatment(
-        self, params, data_train, data_test, treatment, return_score=True
-    ):
+        self, 
+        params: Dict[str, Any],
+        data_train: pd.DataFrame, 
+        data_test: pd.DataFrame, 
+        treatment: int, 
+        return_score: bool = True
+    ) -> Union[np.ndarray, Tuple[np.ndarray, Dict[str, Any]]]:
+        
         data_train, data_valid = train_test_split(
             data_train, test_size=0.3, random_state=RS
         )
@@ -450,7 +478,11 @@ class CausalNets(HTEestimator):
             return tau_pred, history
         return tau_pred
 
-    def fit(self, data, params={}):
+    def fit(
+        self, 
+        data: pd.DataFrame, 
+        params: Dict[str, Dict[str, Any]] = {}
+    ) -> Self:
         """
         Trains the Causal Net model(s) on the given data with the given
         parameters.
@@ -499,7 +531,7 @@ class CausalNets(HTEestimator):
             self.models[treatment] = {"betas_model": betas_model, "model": model}
         return self
 
-    def predict(self, X):
+    def predict(self, X: pd.DataFrame) -> pd.DataFrame:
         """Predict HTE for all six treatments given X.
 
 
@@ -523,7 +555,14 @@ class CausalNets(HTEestimator):
             pred_df[treatment] = np.concatenate(tau_pred)
         return pred_df
 
-    def cross_validate(self, data, gridsearch_params, folds=3, random_search=None):
+    def cross_validate(
+        self, 
+        data: pd.DataFrame, 
+        gridsearch_params: List[Dict[str, Any]], 
+        folds: int = 3, 
+        random_search: Optional[Union[int, float]] = None
+    ) -> None:
+
         self.optimal_params = {
             treatment: dict(params=None, score=10**10)
             for treatment in self.models.keys()
@@ -584,13 +623,13 @@ class MisraMatching:
 
     def getStatsForModel(
         self,
-        ModelClass,
-        data_train,
-        data_test,
-        treatment_names,
-        Shrinker=None,
-        return_assignments=False,
-    ):
+        ModelClass: Type[HTEestimator],
+        data_train: pd.DataFrame,
+        data_test: pd.DataFrame,
+        treatment_names: List[str],
+        Shrinker: Optional[Any] = None,
+        return_assignments: bool = False,
+    ) -> Union[pd.DataFrame, Tuple[pd.DataFrame, pd.Series]]:
         """
         Generates a summary dataframe for Misra Matched outcomes and respective
         counts.
@@ -645,12 +684,12 @@ class MisraMatching:
 
     def cross_validate(
         self,
-        data,
-        treatment_names,
-        repetitions=1,
-        folds=3,
-        used_estimators=[CausalNets],
-    ):
+        data: pd.DataFrame,
+        treatment_names: List[str],
+        repetitions: Optional[int] = 1,
+        folds: Optional[int] = 3,
+        used_estimators: List[Type[HTEestimator]] = [CausalNets],
+    ) -> "MisraMatching.CV_Results":
         """
         Perform the repeated KFold cross-validation and returs the results.
 
@@ -690,7 +729,7 @@ class MisraMatching:
             # test = train
             data_test = data.iloc[test].reset_index(
                 drop=True
-            )  # Comment this in case of not preferring to use test data as test set
+            )  # Comment this in case of not preferring to use test set for testing.
             print("TRAIN DATA DIMENSIONS ", data_train.shape)
             print("TEST DATA DIMENSIONS ", data_test.shape)
 
@@ -735,8 +774,6 @@ class MisraMatching:
             all repetitions and all folds.
 
         history: list of pd.DataFrames
-
-
         """
 
         current_rep = 0
@@ -759,7 +796,7 @@ class MisraMatching:
             self.summarystats = [[None for f in range(folds)] for r in range(reps)]
             self.history = [pd.DataFrame() for r in range(reps)]
 
-        def appendFoldStats(self, dataframes, ates):
+        def appendFoldStats(self, dataframes: List[pd.DataFrame], ates: pd.DataFrame) -> Self:
             """
             Append the sum of matched outcomes for the estimators and the
             overall sum to the results object.
@@ -778,7 +815,7 @@ class MisraMatching:
             )
             return self
 
-        def appendAssignments(self, assignments, indices):
+        def appendAssignments(self, assignments: pd.Series, indices: list) -> Self:
             """
             Appends the predicted optimal treatments to the data storage.
 
@@ -797,7 +834,7 @@ class MisraMatching:
             )
             return self
 
-        def updateIndex(self):
+        def updateIndex(self) -> Self:
             """Updates the index pointers"""
             print(
                 f"Finished Fold {self.current_fold+1} of repetition {self.current_rep+1}"
@@ -812,7 +849,7 @@ class MisraMatching:
                 self.current_rep = "CV finished"
             return self
 
-        def getStatistics(self):
+        def getStatistics(self) -> None:
             """
             Generate the mean matched outcomes for each repetition as well
             as for the over repeated kfold cross validation.
@@ -825,7 +862,7 @@ class MisraMatching:
             pass
 
         @staticmethod
-        def getMeans(df):
+        def getMeans(df: pd.DataFrame) -> pd.DataFrame:
             """
             From the summary dataframe of sums, convert to means. Divide
             the Outcome (Y) rows by the corresponding Count (N) rows.
@@ -836,7 +873,11 @@ class MisraMatching:
             return df
 
     @staticmethod
-    def getMatchingPredictions(df, tau_pred, model_name: str):
+    def getMatchingPredictions(
+        df: pd.DataFrame, 
+        tau_pred: pd.DataFrame, 
+        model_name: str
+    ) -> pd.DataFrame:
         """
         Get the sum of outcomes for the Misra Matched predictions.
 
@@ -879,7 +920,10 @@ class MisraMatching:
         return summary_df
 
     @staticmethod
-    def getATEs(data, used_treatments):
+    def getATEs(
+        data: pd.DataFrame, 
+        used_treatments: List[str]
+    ) -> pd.DataFrame: 
         """
         Get the sum of outcomes for each treatment as well as over all treatments
         to later compute the average treatment effects.

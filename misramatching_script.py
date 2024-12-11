@@ -6,6 +6,7 @@
 import pandas as pd
 import yaml
 import joblib
+from typing import List, Optional, Union, Tuple, Dict, Any, Type
 
 from mlmethods import *
 
@@ -175,7 +176,7 @@ params_allmodels = {
 }
 
 
-def getMinMax(df_list):
+def getMinMax(df_list: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
     min_df = df_list[0].copy()
     max_df = df_list[0].copy()
     for rowIndex, row in min_df.iterrows():
@@ -189,7 +190,7 @@ def getMinMax(df_list):
     return (min_df, max_df)
 
 
-def getTreatDiff(stats):
+def getTreatDiff(stats: pd.DataFrame) -> float:
     return round(stats.iloc[:-3, -1][::2].max() - stats.iloc[-2].max())
 
 
