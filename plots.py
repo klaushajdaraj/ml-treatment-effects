@@ -12,7 +12,9 @@ import joblib
 import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.axes import Axes
 
+from typing import Optional, Tuple, Union
 
 # Read file paths
 with open("config.yaml", "r") as file:
@@ -29,7 +31,7 @@ results_sub_set_path = documents_file_path + "repetitions_subsettreatments.jobli
 sns.set_theme(style="white")
 
 
-def get_data(full_data=True):
+def get_data(full_data: bool = True) -> pd.DataFrame:
     if full_data:
         filename = results_full_set_path
     else:
@@ -48,7 +50,7 @@ def get_data(full_data=True):
     return df_y
 
 
-def makeplot(data, ax=None):
+def makeplot(data: pd.DataFrame, ax: Optional[Axes] = None) -> None:
     sns.set_theme(style="white")
     percent_mean, percent_t4 = get_percentages(data)
     if ax:
@@ -63,7 +65,7 @@ def makeplot(data, ax=None):
         plot.fig.suptitle(f"{percent_mean} over mean, {percent_t4} over treatment 4")
 
 
-def get_percentages(data):
+def get_percentages(data: Union[pd.Series, np.ndarray]) -> Tuple[str, str]:
     n = len(data)
     percent_mean = str(sum(data >= MEAN)) + "/" + str(n)
     percent_t4 = str(sum(data > 1969.846698)) + "/" + str(n)
