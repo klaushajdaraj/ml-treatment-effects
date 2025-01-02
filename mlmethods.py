@@ -4,8 +4,8 @@
 """
 
 import sys
+print(f"The current system version: {sys.version}")
 
-print(f"I am a Python version: {sys.version}")
 import pandas as pd
 import statsmodels.formula.api as smf
 import numpy as np
