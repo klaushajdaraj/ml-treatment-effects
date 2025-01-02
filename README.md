@@ -64,11 +64,9 @@ pip install -r requirements.txt
 ## How to set up the virtual environment using conda (Mac)
 
 ```console
-conda create -y -n ml_treatments_env python=3.9.13
+conda create -n ml_treatments_env python=3.9.13
 
 source activate base # (or use: source ~/.zshrc)
-
-conda install ipykernel -y ipython kernel install --user --name=ml_treatments_env
 
 conda activate ml_treatments_env
 
