@@ -66,8 +66,6 @@ pip install -r requirements.txt
 ```console
 conda create -n ml_treatments_env python=3.9.13
 
-source activate base # (or use: source ~/.zshrc)
-
 conda activate ml_treatments_env
 
 pip install -r requirements.txt
