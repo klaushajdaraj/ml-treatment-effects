@@ -7,7 +7,7 @@
 </p>
 
 ![Static Badge](https://img.shields.io/badge/python-3.9.13-blue?link=https%3A%2F%2Fwww.python.org%2Fdownloads%2Frelease%2Fpython-3913%2F)
-![Static Badge](https://img.shields.io/badge/GPL-3.0-license-red?link=https%3A%2F%2Fgithub.com%2Fklaushajdaraj%2Fml-treatment-effects%2Fblob%2Fmain%2FLICENSE)
+![Static Badge](https://img.shields.io/badge/GPL-3.0-red?link=https%3A%2F%2Fgithub.com%2Fklaushajdaraj%2Fml-treatment-effects%2Fblob%2Fmain%2FLICENSE)
 ![Static Badge](https://img.shields.io/badge/tensorflow-2.10.0-green?link=)
 
 ## Introduction
