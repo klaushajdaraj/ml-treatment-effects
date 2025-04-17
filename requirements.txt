@@ -56,7 +56,7 @@ keras @ file:///usr/local/conda/envs/tf210/conda-bld/keras_1670959247669/work/ke
 Keras-Preprocessing @ file:///tmp/build/80754af9/keras-preprocessing_1612283640596/work
 kiwisolver==1.4.7
 libclang==18.1.1
-lightgbm==4.5.0
+lightgbm==4.6.0
 llvmlite==0.43.0
 Markdown @ file:///private/var/folders/nz/j6p8yfhx1mv_0grj5xl4650h0000gp/T/abs_160njdxnjs/croot/markdown_1671541913695/work
 markdown-it-py==3.0.0
